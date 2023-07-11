@@ -1,0 +1,189 @@
+<div class="main">
+  <mat-card class="mr-24 form-card">
+    <mat-card-content>
+      <mat-card-header class="form-heading">
+        <mat-card-title>Order Details</mat-card-title>
+      </mat-card-header>
+      <form [formGroup]="orderForm" class="form">
+        <mat-form-field>
+          <mat-label>Supplier Name</mat-label>
+          <input matInput type="text" formControlName="supplierName" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Location</mat-label>
+          <input matInput type="text" formControlName="location" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Supplier Invoice Number</mat-label>
+          <input matInput type="text" formControlName="invoiceNumber" required>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Notes</mat-label>
+          <textarea matInput maxlength="200" formControlName="notes"></textarea>
+          <mat-hint align="end">{{notesLength}}/200</mat-hint>
+        </mat-form-field>
+      </form>
+    </mat-card-content>
+  </mat-card>
+  <mat-card class="d-flex">
+    <mat-card-header>
+      <mat-card-title>Products</mat-card-title>
+      <mat-card-subtitle class="flex-row align-items-start">
+        <img class="alert-icon" src="assets/alert.png" >
+        <div>
+          Product Qty, average product cost and the latest buying price are updated after completing the purchase order
+        </div>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content class="invoice-content">
+      <mat-form-field class="dropdown">
+        <mat-select placeholder="Type Variant name or SKU">
+          <mat-option *ngFor="let option of productOptions" [value]="option.id" (click)="appendItemToDataSource(option)">
+            {{option.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <div *ngIf="!dataSource.length" class="flex-column justify-content-center align-items-start">
+        <img class="height-200" src="assets/search-product.png">
+        <span class="mt-12">Search for products that you would like to add to your purchase order</span>
+      </div>
+      <div *ngIf="dataSource.length">
+        <table>
+          <tr>
+            <th></th>
+            <th>Name</th>
+            <th>New QTY</th>
+            <th>New Cost (Tax Exclusive)</th>
+            <th>Tax Code</th>
+          </tr>
+          <ng-container *ngFor="let option of dataSource">
+            <tr>
+              <td>
+                <button mat-icon-button (click)="option.expandRow = !option.expandRow">
+                  <mat-icon>arrow_drop_down</mat-icon>
+                </button>
+              </td>
+              <td>
+                {{option.name}}<br>{{option.id}}
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput type="text" [(ngModel)]="option.qty">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-form-field>
+                  <input matInput type="text" disabled="true" [(ngModel)]="option.cost * option.qty">
+                </mat-form-field>
+              </td>
+              <td>
+                <mat-select [(ngModel)]="option.tax">
+                  <mat-option *ngFor="let option of taxOptions" [value]="option.value">
+                    {{option.viewValue}}
+                  </mat-option>
+                </mat-select>
+              </td>
+              <td>
+                <button mat-icon-button (click)="deleteRow(option)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </tr>
+            <ng-container *ngIf="option.expandRow">
+              <tr>
+                <td colspan="3">
+                    <div class="flex-column text-align-end">
+                      <span>Available Qty<br>(Available in Stock)</span>
+                      <span>0</span>
+                      <span>Expected Qty<br>(Total will be available)</span>
+                      <span>{{option.qty}}</span>
+                      <span>Last buy price</span>
+                      <span>0</span>
+                    </div>
+                </td>
+                <td colspan="3">
+                    <div class="flex-column text-align-end">
+                      <span>Total Cost<br>(Tax Exclusive)</span>
+                      <span>{{getTotalCost(option)}}</span>
+                      <span>Tax Amount</span>
+                      <span>{{getTotalTaxAmount(option)}}</span>
+                      <span>Total Cost<br>(Tax Inclusive)</span>
+                      <span>{{getTotalCost(option) + getTotalTaxAmount(option)}}</span>
+                    </div>
+                  </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+          <ng-container>
+            <tr class="mb-12">
+              <td>
+                <button mat-icon-button (click)="isDisplayCostBreakDown = !isDisplayCostBreakDown">
+                  <mat-icon>arrow_drop_down</mat-icon>
+                </button>
+              </td>
+              <td colspan="2">Sub Total (Tax Exclusive)</td>
+              <td colspan="2">{{getTotalAmount()}}</td>
+            </tr>
+            <ng-container *ngIf="isDisplayCostBreakDown">
+              <tr class="mb-12">
+                <td colspan="3">Total Tax</td>
+                <td colspan="2">+{{getCommulativeTaxAmount()}}</td>
+              </tr>
+              <tr class="mb-12">
+                <td colspan="3">Total (Tax Inclusive)</td>
+                <td colspan="2">{{getTotalAmount() + getCommulativeTaxAmount()}}</td>
+              </tr>
+            </ng-container>
+          </ng-container>
+        </table>
+        <mat-divider></mat-divider>
+        <div *ngIf="dataSource.length" class="flex-column">
+          <div class="payment-item">
+            <mat-radio-group aria-label="Select an option" [(ngModel)]="selectedPaymentOption">
+              <mat-radio-button *ngFor="let paymentOption of paymentOptions" [value]="paymentOption.value">{{paymentOption.viewValue}}</mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div *ngIf="selectedPaymentOption === 'pay_now'" class="payment-item">
+            <span class="width-50">Payment Method</span>
+            <mat-select class="width-50" [(ngModel)]="selectedPaymentMethod">
+              <mat-option *ngFor="let method of paymentMethods" [value]="method.value">
+                {{method.viewValue}}
+              </mat-option>
+            </mat-select>
+          </div>
+          <div *ngIf="selectedPaymentOption === 'pay_now'" class="payment-item">
+            <span class="width-100">Payed Amount</span>
+            <mat-form-field class="width-100">
+              <input matInput type="number" [(ngModel)]="payedAmount">
+            </mat-form-field>
+          </div>
+          <div class="payment-item">
+            <span class="width-50">Credit Amount</span>
+            <span class="width-50 color-darkred">{{getTotalAmount() + getCommulativeTaxAmount() - payedAmount}}</span>
+          </div>
+          <div class="payment-item">
+            <span class="width-50">Payment Due Date</span>
+            <mat-form-field class="width-50">
+              <mat-label>Choose a date</mat-label>
+              <input matInput [matDatepicker]="picker" [(ngModel)]="selectedDate">
+              <mat-hint>MM/DD/YYYY</mat-hint>
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+<div class="footer">
+  <mat-divider></mat-divider>
+  <div class="action-buttons">
+    <button mat-button>Cancel</button>
+    <button mat-raised-button class="ml-12">Save as draft</button>
+    <button mat-raised-button class="ml-12" color="primary" [disabled]="!isOrderButtonDisabled()">Complete Order</button>
+  </div>
+</div>

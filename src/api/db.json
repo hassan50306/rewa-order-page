@@ -1,0 +1,29 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Iphone 2",
+      "cost": 150
+    },
+    {
+      "id": 2,
+      "name": "Galaxy S7",
+      "cost": 250
+    },
+    {
+      "id": 3,
+      "name": "Motorolla",
+      "cost": 100
+    },
+    {
+      "id": 4,
+      "name": "Pixel 5",
+      "cost": 350
+    },
+    {
+      "id": 5,
+      "name": "Oppo",
+      "cost": 50
+    }
+  ]
+}

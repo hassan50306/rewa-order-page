@@ -1,0 +1,125 @@
+.main {
+    padding: 20px 10% 20px 10%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.mr-24 {
+    margin-right: 24px;
+}
+
+.form {
+    flex-direction: column;
+    align-items: center;
+    display: flex;
+}
+
+mat-form-field {
+    width: -webkit-fill-available;
+}
+
+mat-card {
+    height: fit-content;
+    width: -webkit-fill-available;
+}
+
+.form-card {
+    width: 40% !important;
+}
+
+.form-heading {
+    margin-bottom: 24px;
+    padding-left: 0 !important;
+    padding-top: 0 !important;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    padding: 64px;
+}
+
+table {
+    width: 100%;
+    text-align: left;
+}
+
+.expandable-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.width-50 {
+    width: 50%;
+}
+
+.payment-item {
+    margin-bottom: 12px;
+    display: flex;
+    flex-direction: row;
+}
+
+.alert-icon {
+    height: 18px;
+    padding-right: 8px;
+}
+
+.invoice-content {
+    max-height: 650px;
+    overflow-y: auto;
+}
+
+.height-200 {
+    height: 200px;
+}
+
+.mt-12 {
+    margin-top: 12px;
+}
+
+.mb-12 {
+    margin-bottom: 12px;
+}
+
+.ml-12 {
+    margin-left: 12px;
+}
+
+.width-100 {
+    width: 100%;
+}
+
+.color-darkred {
+    color: darkred;
+}
+
+.align-items-start {
+    align-items: start;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.text-align-end {
+    text-align: end;
+}
+
+.flex-row {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-column {
+    display: flex;
+    flex-direction: column;
+}
